@@ -426,7 +426,11 @@ class SQLApi():
           slot = 'MI'
           slot_interval = 'MINUTE'
 
-        select = "trunc(%(field)s, '%(slot)s') AS %(field_name)s, trunc(%(field)s, '%(slot)s') + interval 1 %(slot_interval)s AS %(field_name_to)s" % {
+        select = """"
+          trunc(%(field)s, '%(slot)s') AS %(field_name)s,
+          trunc(%(field)s, '%(slot)s') + interval 1 %(slot_interval)s AS %(field_name_min)s,
+          trunc(%(field)s, '%(slot)s') + interval 1 %(slot_interval)s AS %(field_name_max)s,
+          trunc(%(field)s, '%(slot)s') + interval 1 %(slot_interval)s AS %(field_name_to)s""" % {
             'field': field,
             'slot': slot,
             'slot_interval': slot_interval,
@@ -542,6 +546,9 @@ class SQLApi():
 
     if facet['properties']['canRange']:
       if facet['properties']['isDate']:
+        
+        # Add min, max, slot into query?
+        
         props = {}#self._get_time_filter_range(collection, query)
         if props['unit'] == 'SECOND':
           dt = timedelta(seconds=1)
